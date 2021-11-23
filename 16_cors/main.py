@@ -1,24 +1,30 @@
-from typing import Optional, List
-
 import uvicorn
-from fastapi import FastAPI, Header, Cookie
+from fastapi import FastAPI
+
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
 
-@app.get("/read_header", summary="获取 header 参数")
-async def read_header(user_agent: Optional[str] = Header(None)):
-    return {"User-Agent": user_agent}
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,  # 指示跨域请求支持 cookies。默认是 False
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-@app.get("/header_list", summary="重复的 header")
-async def header_list(x_token: Optional[List[str]] = Header(None)):
-    return {"X-Token values": x_token}
+@app.get("/")
+async def main():
+    return {"message": "Hello World"}
 
-
-@app.get("/read_cookie", summary="获取 cookie 参数")
-async def read_cookie(cc_id: Optional[str] = Cookie(None)):
-    return {"cc_id": cc_id}
 
 if __name__ == '__main__':
-    uvicorn.run('main:app', host='127.0.0.1', reload=True, port=9005)
+    uvicorn.run('main:app', host='127.0.0.1', reload=True, port=9000)
