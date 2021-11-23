@@ -1,25 +1,27 @@
+import random
+import time
+
 import uvicorn
-
-from fastapi import FastAPI, File, UploadFile
-
-app = FastAPI()
-
-from fastapi import BackgroundTasks, FastAPI
+from fastapi import BackgroundTasks, FastAPI, Depends
 
 app = FastAPI()
 
 
-def tasks(msg):
-    print('耗时任务开始执行', msg)
-    import time
-    time.sleep(5)
-    print('耗时任务开始结束', msg)
+def write_notification(email: str, message=""):
+    print('开始给邮箱:', email, '发送邮件,', message)
+    time.sleep(random.randint(1, 3))
+    print('邮箱:', email, '发送邮件结束')
 
 
-@app.post("/bg_task_with_thread")
-async def bg_task_with_thread(msg: str, background_tasks: BackgroundTasks):
-    background_tasks.add_task(tasks, msg)
-    return "任务已经再处理中！"
+@app.post("/send-notification/{email}", summary="异步发送邮件通知")
+async def bg_task_with_thread(email: str, background_tasks: BackgroundTasks):
+    background_tasks.add_task(write_notification, email, message="欢迎欢迎━(*｀∀´*)ノ亻!")
+    return {"message": "邮件已发送, 请查看您的邮箱."}
+
+
+@app.post("/send-notification2/{email}", summary="异步发送邮件通知 - 基于依赖")
+async def send_notification(send_email: str = Depends(bg_task_with_thread)):
+    return send_email
 
 
 if __name__ == '__main__':
