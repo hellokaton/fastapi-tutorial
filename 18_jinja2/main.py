@@ -1,24 +1,22 @@
-from typing import Optional, List
-
 import uvicorn
-from fastapi import FastAPI, Header, Cookie
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+
+from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/read_header", summary="获取 header 参数")
-async def read_header(user_agent: Optional[str] = Header(None)):
-    return {"User-Agent": user_agent}
-
-
-@app.get("/header_list", summary="重复的 header")
-async def header_list(x_token: Optional[List[str]] = Header(None)):
-    return {"X-Token values": x_token}
+templates = Jinja2Templates(directory="templates")
 
 
-@app.get("/read_cookie", summary="获取 cookie 参数")
-async def read_cookie(cc_id: Optional[str] = Cookie(None)):
-    return {"cc_id": cc_id}
+@app.get("/hello/{req_id}", response_class=HTMLResponse)
+async def read_item(request: Request, req_id: str):
+    return templates.TemplateResponse("hello.html", {"request": request, "req_id": req_id})
 
+
+# pip install jinja2
 if __name__ == '__main__':
-    uvicorn.run('main:app', host='127.0.0.1', reload=True, port=9005)
+    uvicorn.run('main:app', host='127.0.0.1', reload=True, port=9000)
