@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import Depends, HTTPException, status
 from fastapi import FastAPI
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 from passlib.context import CryptContext
 from pydantic import BaseModel
 
@@ -101,7 +101,11 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         if username is None:
             raise credentials_exception
         token_data = TokenData(username=username)
+    except ExpiredSignatureError as e:
+        print("token过期")
+        raise credentials_exception
     except JWTError:
+        print("token验证失败")
         raise credentials_exception
     user = get_user(fake_users_db, username=token_data.username)
     if user is None:
