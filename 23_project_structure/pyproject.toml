@@ -1,25 +1,27 @@
-# Linter configuruation.
-[tool.isort]
-profile = "black"
-atomic = true
-extend_skip_glob = "migrations,scripts"
-line_length = 88
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["biezhi <biezhi.me@gmail.com>"]
 
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.70.0"
+uvicorn = "^0.15.0"
+python-multipart = "^0.0.5"
+pydantic = "^1.8.2"
+Jinja2 = "^3.0.3"
+SQLAlchemy = "^1.4.27"
+alembic = "^1.7.5"
+tenacity = "^8.0.1"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+PyJWT = "^2.3.0"
+python-dotenv = "^0.19.2"
 
-[tool.black]
-extend-exclude = "migrations,scripts"
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
 
-
-[tool.mypy]
-follow_imports = "skip"
-ignore_missing_imports = true
-warn_no_return = false
-warn_unused_ignores = true
-allow_untyped_globals = true
-allow_redefinition = true
-pretty = true
-
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-ignore_errors = true
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
