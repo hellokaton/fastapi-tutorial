@@ -56,7 +56,7 @@ async def response_html():
     return HTMLResponse(content=html_content, status_code=200)
 
 
-@app.get("/redirect_response", summary="重定向", response_class=HTMLResponse)
+@app.get("/redirect_response", summary="重定向", response_class=RedirectResponse)
 async def redirect_response():
     return RedirectResponse("https://wwww.baidu.com")
 
